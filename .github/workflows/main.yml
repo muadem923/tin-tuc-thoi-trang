@@ -4,14 +4,18 @@ on:
     - cron: '0 */2 * * *' # Cứ 2 giờ (120 phút) chạy 1 lần
   workflow_dispatch: # Nút bấm chạy thủ công để test
 
+# Ép GitHub sử dụng Node.js 24 để tắt cảnh báo
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # Đã cập nhật lên bản v4 mới nhất
+      - uses: actions/checkout@v4
       
       - name: Cai dat Python
-        uses: actions/setup-python@v5 # Đã cập nhật lên bản v5 mới nhất
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           
