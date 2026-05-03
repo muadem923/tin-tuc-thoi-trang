@@ -1,8 +1,12 @@
 name: Bot Cap Nhat Tin Tuc
 on:
   schedule:
-    - cron: '0 */2 * * *' # Cứ 2 giờ (120 phút) chạy 1 lần
-  workflow_dispatch: # Nút bấm chạy thủ công để test
+    # Chạy mỗi 2 tiếng một lần (00:00, 02:00, v.v...)
+    - cron: '0 */2 * * *'
+  workflow_dispatch: # Dòng này cực quan trọng: Cho phép anh bấm nút "Run workflow" bằng tay để test
+  push:
+    branches:
+      - main # Chạy mỗi khi anh nhấn Save/Commit vào file
 
 # Ép GitHub sử dụng Node.js 24 để tắt cảnh báo
 env:
@@ -12,10 +16,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.1
       
       - name: Cai dat Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.1.0
         with:
           python-version: '3.10'
           
