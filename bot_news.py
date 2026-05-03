@@ -12,8 +12,10 @@ RSS_URLS = [
     'https://vnexpress.net/rss/giai-tri.rss'
     'https://thanhnien.vn/rss/giai-tri.rss'
     'https://kenh14.vn/star.rss'
+    'https://afamily.vn/me-va-be.rss'
+    'https://afamily.vn/lifestyle.rss'
 ]
-KEYWORDS = ['thời trang', 'mặc đẹp', 'phong cách', 'xu hướng', 'bộ sưu tập']
+KEYWORDS = ['thời trang', 'mặc đẹp', 'phong cách', 'xu hướng', 'bộ sưu tập', 'bé', 'trẻ', 'tiền tỷ', 'bikini', 'nóng bỏng', 'hoa khôi', 'tư thế']
 
 def rewrite_with_ai(title, summary):
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
