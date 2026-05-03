@@ -1,0 +1,32 @@
+name: Bot Cap Nhat Tin Tuc
+on:
+  schedule:
+    - cron: '0 */2 * * *' # Cứ 2 giờ (120 phút) chạy 1 lần
+  workflow_dispatch: # Nút bấm chạy thủ công để test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Cai dat Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Cai dat thu vien
+        run: pip install feedparser requests
+        
+      - name: Chay bo loc va AI
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python bot_news.py
+        
+      - name: Luu file du lieu
+        run: |
+          git config --global user.name "GitHub Bot"
+          git config --global user.email "bot@github.com"
+          git add news_data.json
+          git commit -m "Cap nhat tin thoi trang" || exit 0
+          git push
