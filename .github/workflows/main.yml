@@ -1,40 +1,39 @@
 name: Bot Cap Nhat Tin Tuc
 on:
   schedule:
-    # Chạy mỗi 2 tiếng một lần (00:00, 02:00, v.v...)
     - cron: '0 */2 * * *'
-  workflow_dispatch: # Dòng này cực quan trọng: Cho phép anh bấm nút "Run workflow" bằng tay để test
+  workflow_dispatch:
   push:
-    branches:
-      - main # Chạy mỗi khi anh nhấn Save/Commit vào file
-
-# Ép GitHub sử dụng Node.js 24 để tắt cảnh báo
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
+    branches: [main]
+    paths: ['bot_news.py', '.github/workflows/main.yml']
+permissions:
+  contents: write
+concurrency:
+  group: news-data-main
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
-      - uses: actions/checkout@v4.1.1
-      
-      - name: Cai dat Python
-        uses: actions/setup-python@v5.1.0
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-          
-      - name: Cai dat thu vien
-        run: pip install feedparser requests
-        
-      - name: Chay bo loc va AI
+          python-version: '3.12'
+      - run: pip install 'feedparser>=6,<7' 'requests>=2.32,<3'
+      - name: Fetch relevant news safely
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python bot_news.py
-        
-      - name: Luu file du lieu
+      - name: Save validated data
         run: |
-          git config --global user.name "GitHub Bot"
-          git config --global user.email "bot@github.com"
+          python -m json.tool news_data.json > /dev/null
+          git config user.name 'GitHub Bot'
+          git config user.email 'bot@github.com'
           git add news_data.json
-          git commit -m "Cap nhat tin thoi trang" || exit 0
-          git push
+          if git diff --cached --quiet; then
+            echo 'No news changes'
+          else
+            git commit -m 'Update relevant fashion news'
+            git push
+          fi
